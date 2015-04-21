@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#" style="font-size:bold">CA485</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a class="quickColors" id="blackColor">Black</a></li>
+		<li><a class="quickColors" id="blueColor">Blue</a></li>
+		<li><a class="quickColors" id="redColor">Red</a></li>
+		<li><a class="quickColors" id="yellowColor">Yellow</a></li>
+		<li>
+			<div style="margin-top: 17%;">
+				<input type='text' id="full"/>
+			</div>
+		</li>
+		<li><a class="quickColors" id="clearCanvas">Clear</a></li>		
+		<li><a id="dl" download="Canvas.png">Download</a></li>		
+	
+	
+	    <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Email Us <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="mailto:amy.dromgoole2@mail.dcu.ie?Subject=CA485%20Project">Amy Dromgoole</a></li>
+            <li><a href="mailto:karla.mcdonnell25@mail.dcu.ie?Subject=CA485%20Project">Karla McDonnell</a></li>
+			<li><a href="mailto:siobhan.tierney3@mail.dcu.ie?Subject=CA485%20Project">Siobhan Tierney</a></li>
+            <li><a href="mailto:Mark.Bagnell2@mail.dcu.ie?Subject=CA485%20Project">Mark Bagnell</a></li>
+          </ul>
+        </li>
+      </ul>
+         </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+
+	<head>
+		<meta charset="utf-8">
+		<title>Paint</title>
+		<style type="text/css">
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; background: #ffffff }
+      #imageTemp { position: absolute; top: 50px; left: 17%; bottom:10px; }
+	  body {
+				
+			}
+    </style>
+	</head>
+	<body background="http://84d1f3.medialib.glogster.com/media/7b/7b93e92901c04254c7da0794b67bdbc95794af51e924b9e342f9635a7f60572a/paint-the-rainbow.jpg">
+
+
+	
+    <p><label   style="background-color: white;font-size: x-large;border-width:2px;border-style: solid;position: absolute; top:12%; left: 38%;">&nbsp;Drawing tool: <select id="dtool">
+        <option value="line">Line</option>
+        <option value="rect">Rectangle</option>
+        <option value="pencil">Pencil</option>
+		<option value="circle">Circle</option>
+    </select></label></p>
+	
+
+    <div id="container">
+      <canvas id="imageView" style="position: absolute; top: 50px; left: 17%;bottom:10px;"  width="850" height="440">
+        <p>Unfortunately, your browser is currently unsupported by our web
+        application.  We are sorry for the inconvenience. Please use one of the
+        supported browsers listed below, or draw the image you want using an
+        offline tool.</p>
+        
+      </canvas>
+    </div>
+	
+	<!--colorpicker http://bgrins.github.io/spectrum/-->
+
+
+
+		<!--Jquery and bootstrap-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>	
+<script src="Bootstrap\bootstrap.min.js"></script>
+<link href="Bootstrap\bootstrap.min.css" rel="stylesheet">
+
+<!--color picker http://bgrins.github.io/spectrum/-->
+
+<script src="http://bgrins.github.io/spectrum/spectrum.js"></script>
+<link href="http://bgrins.github.io/spectrum/spectrum.css" rel="stylesheet">
+
+
+    
+  </body>
+	
+	<script>
+	//Derived from https://dev.opera.com/articles/html5-canvas-painting/
+// Keep everything in anonymous function, called on window load.
+if(window.addEventListener) {
+window.addEventListener('load', function () {
+
+
+$("#blueColor").click(function () {
+	context.strokeStyle = 'blue';
+})
+
+$("#redColor").click(function () {
+	context.strokeStyle = 'red';
+})
+
+$("#yellowColor").click(function () {
+	context.strokeStyle = 'yellow';
+})
+
+$("#blackColor").click(function () {
+	context.strokeStyle = 'black';
+})
+function complexChangeColor(color)
+{
+context.strokeStyle = color;
+}
+
+$("#clearCanvas").click(function () {
+
+context.clearRect(0, 0, canvas.width, canvas.height);
+contexto = canvaso.getContext('2d');
+contexto.clearRect(0, 0, canvas.width, canvas.height);
+})
+
+
+  var canvas, context, canvaso, contexto;
+
+  // The active tool instance.
+  var tool;
+  var tool_default = 'line';
+
+  function init () {
+    // Find the canvas element.
+    canvaso = document.getElementById('imageView');
+    if (!canvaso) {
+      alert('Error: I cannot find the canvas element!');
+      return;
+    }
+
+    if (!canvaso.getContext) {
+      alert('Error: no canvas.getContext!');
+      return;
+    }
+
+    // Get the 2D canvas context.
+    contexto = canvaso.getContext('2d');
+    if (!contexto) {
+      alert('Error: failed to getContext!');
+      return;
+    }
+
+    // Add the temporary canvas.
+    var container = canvaso.parentNode;
+    canvas = document.createElement('canvas');
+    if (!canvas) {
+      alert('Error: I cannot create a new canvas element!');
+      return;
+    }
+
+    canvas.id     = 'imageTemp';
+    canvas.width  = canvaso.width;
+    canvas.height = canvaso.height;
+	
+	
+    container.appendChild(canvas);
+
+    context = canvas.getContext('2d');
+	
+	
+    // Get the tool select input.
+    var tool_select = document.getElementById('dtool');
+    if (!tool_select) {
+      alert('Error: failed to get the dtool element!');
+      return;
+    }
+    tool_select.addEventListener('change', ev_tool_change, false);
+
+    // Activate the default tool.
+    if (tools[tool_default]) {
+      tool = new tools[tool_default]();
+      tool_select.value = tool_default;
+    }
+
+    // Attach the mousedown, mousemove and mouseup event listeners.
+    canvas.addEventListener('mousedown', ev_canvas, false);
+    canvas.addEventListener('mousemove', ev_canvas, false);
+    canvas.addEventListener('mouseup',   ev_canvas, false);
+  }
+
+  // The general-purpose event handler. This function just determines the mouse 
+  // position relative to the canvas element.
+  function ev_canvas (ev) {
+    if (ev.layerX || ev.layerX == 0) { // Firefox
+      ev._x = ev.layerX;
+      ev._y = ev.layerY;
+    } else if (ev.offsetX || ev.offsetX == 0) { // Opera
+      ev._x = ev.offsetX;
+      ev._y = ev.offsetY;
+    }
+
+    // Call the event handler of the tool.
+    var func = tool[ev.type];
+    if (func) {
+      func(ev);
+    }
+  }
+
+  // The event handler for any changes made to the tool selector.
+  function ev_tool_change (ev) {
+    if (tools[this.value]) {
+      tool = new tools[this.value]();
+    }
+  }
+
+  // This function draws the #imageTemp canvas on top of #imageView, after which 
+  // #imageTemp is cleared. This function is called each time when the user 
+  // completes a drawing operation.
+  function img_update () {
+		contexto.drawImage(canvas, 0, 0);
+		context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // This object holds the implementation of each drawing tool.
+  var tools = {};
+
+  // The drawing pencil.
+  tools.pencil = function () {
+    var tool = this;
+    this.started = false;
+
+    // This is called when you start holding down the mouse button.
+    // This starts the pencil drawing.
+    this.mousedown = function (ev) {
+        context.beginPath();
+        context.moveTo(ev._x, ev._y);
+        tool.started = true;
+    };
+
+    // This function is called every time you move the mouse. Obviously, it only 
+    // draws if the tool.started state is set to true (when you are holding down 
+    // the mouse button).
+    this.mousemove = function (ev) {
+      if (tool.started) {
+        context.lineTo(ev._x, ev._y);
+        context.stroke();
+      }
+    };
+
+    // This is called when you release the mouse button.
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+      }
+    };
+  };
+
+  // The rectangle tool.
+ tools.rect = function () {
+    var tool = this;
+    this.started = false;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      var x = Math.min(ev._x,  tool.x0),
+          y = Math.min(ev._y,  tool.y0),
+          w = Math.abs(ev._x - tool.x0),
+          h = Math.abs(ev._y - tool.y0);
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!w || !h) {
+        return;
+      }
+
+      context.strokeRect(x, y, w, h);
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+      };
+    };
+  };
+
+  //circle tool
+  // derived from http://jsfiddle.net/m1erickson/3SFJy/
+tools.circle = function () {
+ 
+  var tool = this;
+    this.started = false;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+	
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+ 
+	var x = (ev._x + tool.x0) / 2;
+    var y = (ev._y + tool.y0) / 2;
+	var w = Math.abs(ev._x + tool.x0) / 2;
+    var h = Math.abs(ev._y + tool.y0) / 2;
+
+	  context.clearRect(0, 0, canvas.width, canvas.height);
+ 
+    var radius = Math.max(
+        Math.abs(ev._x - tool.x0),
+        Math.abs(ev._y - tool.y0)
+    ) / 2;
+ 
+      if (!w || !h) {
+        return;
+      }
+
+ 
+    context.beginPath();
+    context.arc(x, y, radius, 0, Math.PI*2, false);
+    // tmp_ctx.arc(x, y, 5, 0, Math.PI*2, false);
+    context.stroke();
+    context.closePath();
+	}
+ 
+ this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+      }
+    };
+ 
+ };
+  
+  
+  // The line tool.
+  tools.line = function () {
+    var tool = this;
+    this.started = false;
+
+    this.mousedown = function (ev) {
+      tool.started = true;
+      tool.x0 = ev._x;
+      tool.y0 = ev._y;
+    };
+
+    this.mousemove = function (ev) {
+      if (!tool.started) {
+        return;
+      }
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      context.beginPath();
+      context.moveTo(tool.x0, tool.y0);
+      context.lineTo(ev._x,   ev._y);
+      context.stroke();
+      context.closePath();
+    };
+
+    this.mouseup = function (ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+      }
+    };
+  };
+
+  init();
+
+  
+  
+  
+$("#full").spectrum({
+    color: "#FFFFFF",
+    showInput: true,
+    className: "full-spectrum",
+    showInitial: true,
+    showPalette: false,
+    showSelectionPalette: false,
+    maxPaletteSize: 0,
+    preferredFormat: "hex",
+    localStorageKey: "spectrum.demo",
+    move: function (color) {
+        
+    },
+    show: function () {
+    
+    },
+    beforeShow: function () {
+    
+    },
+    hide: function () {
+    
+    },
+    change: function(color) {
+		context.strokeStyle = color;
+	},
+
+});
+  
+  
+}, false); }
+
+// vim:set spell spl=en fo=wan1croql tw=80 ts=2 sw=2 sts=2 sta et ai cin fenc=utf-8 ff=unix:
+
+var canvasDL = document.getElementById("imageView");
+var ctx = canvasDL.getContext("2d");
+
+
+/* REGISTER DOWNLOAD HANDLER */
+/* Only convert the canvas to Data URL when the user clicks. 
+   This saves RAM and CPU ressources in case this feature is not required. */
+function dlCanvas() {
+  var dt = canvasDL.toDataURL('image/png');
+  /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+  dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+
+  /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+  dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+
+  this.href = dt;
+  
+};
+document.getElementById("dl").addEventListener('click', dlCanvas, false);
+
+</script>
+<style>
+  .quickColors {
+            cursor: pointer;
+        }
+	
+   #dl {
+            cursor: pointer;
+        }
+
+</style>
+	
+</html>
